@@ -29,9 +29,6 @@ styles.css   — design tokens, layout, glass-morphism effects, responsive break
 
 Open `index.html` in any browser. No server needed.
 
-## How to deploy
-
-Upload both files to any static hosting provider (Netlify, GitHub Pages, Cloudflare Pages). The site has no backend and no build step.
 
 ---
 
