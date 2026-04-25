@@ -25,9 +25,6 @@ index.html   — structure and application logic (JSX inline)
 styles.css   — design tokens, layout, glass-morphism effects, responsive breakpoints
 ```
 
-## How to run locally
-
-Open `index.html` in any browser. No server needed.
 
 
 ---
