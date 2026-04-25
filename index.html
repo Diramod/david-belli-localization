@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>David Belli — Italian Game Localization</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+const RADIUS     = 20;
+const RADIUS_SM  = Math.round(RADIUS * 0.70);
+const RADIUS_BTN = Math.round(RADIUS * 0.65);
+
+const EMAIL = 'david.belli.work@gmail.com';
+
+// ── Data ──────────────────────────────────────────────────────────────────
+
+const CREDITS = [
+  { title: 'Helldivers 2',       studio: 'Arrowhead Game Studios', year: '2024', via: 'Wabbit Translations' },
+  { title: 'Cities: Skylines 2', studio: 'Colossal Order',         year: '2023', via: 'Wabbit Translations' },
+  { title: 'Total War: Pharaoh', studio: 'Creative Assembly',       year: '2023', via: 'Wabbit Translations' },
+];
+
+const PACKAGES = [
+  {
+    tag: 'Base',
+    name: 'Italian Ready',
+    price: '€400–700',
+    pitch: 'Your game translated and ready to ship in Italian.',
+    items: ['UI strings & menus', 'Up to ~10k words', 'Glossary creation', 'Single revision round', '5-day turnaround'],
+    ideal: 'Small indie games, demos, early access.',
+  },
+  {
+    tag: 'Pro',
+    name: 'Italian Launch',
+    price: '€1,200–2,500',
+    pitch: 'Complete localization for a polished, market-ready Italian release.',
+    items: ['Full game text — UI, narrative, lore', 'Up to ~50k words', 'Style guide + glossary', 'Two revision rounds', 'Cultural adaptation', 'Localization QA checklist'],
+    ideal: 'Mid-scope games targeting a professional Italian release.',
+    featured: true,
+  },
+  {
+    tag: 'Full',
+    name: 'Italian Market Partner',
+    price: '€3,000–5,000',
+    pitch: 'End-to-end Italian localization partnership from pre-production to post-launch.',
+    items: ['Everything in Italian Launch', 'Unlimited word count', 'Marketing copy & Steam page', 'Ongoing post-launch updates', 'Direct dev team integration', 'Priority availability', 'Dedicated channel'],
+    ideal: 'Ambitious indie and AA titles serious about Italy.',
+  },
+];
+
+// ── Primitives ────────────────────────────────────────────────────────────
+
+function FadeUp({ children, delay = 0, style }) {
+  const [visible, setVisible] = React.useState(false);
+  React.useEffect(() => {
+    const t = setTimeout(() => setVisible(true), delay);
+    return () => clearTimeout(t);
+  }, []);
+  return (
+    <div style={{
+      opacity:    visible ? 1 : 0,
+      transform:  visible ? 'translateY(0)' : 'translateY(20px)',
+      transition: 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)',
+      ...style,
+    }}>{children}</div>
+  );
+}
+
+function Chip({ children, style }) {
+  return (
+    <span style={{
+      display:        'inline-flex',
+      flexDirection:  'column',
+      alignItems:     'center',
+      justifyContent: 'space-around',
+      fontSize:       '11.5px',
+      fontWeight:     600,
+      letterSpacing:  '0.08em',
+      textTransform:  'uppercase',
+      padding:        '5px 14px',
+      borderRadius:   '100px',
+      background:     'oklch(100% 0 0 / 0.65)',
+      border:         '1px solid oklch(100% 0 0 / 0.9)',
+      boxShadow:      '0 1px 4px oklch(0% 0 0 / 0.08)',
+      color:          'var(--accent)',
+      backdropFilter: 'blur(8px)',
+      ...style,
+    }}>{children}</span>
+  );
+}
+
+function GradText({ children, style }) {
+  return (
+    <span style={{
+      background:           'linear-gradient(135deg, var(--accent), var(--accent2))',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor:  'transparent',
+      backgroundClip:       'text',
+      ...style,
+    }}>{children}</span>
+  );
+}
+
+// ── Nav ───────────────────────────────────────────────────────────────────
+
+function Nav() {
+  const [scrolled, setScrolled] = React.useState(false);
+  React.useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  return (
+    <nav style={{
+      position:        'fixed',
+      top: 0, left: 0, right: 0,
+      zIndex:          200,
+      display:         'flex',
+      alignItems:      'center',
+      justifyContent:  'space-between',
+      padding:         '0 40px',
+      height:          '58px',
+      background:      scrolled ? 'oklch(98% 0.003 80 / 0.75)' : 'transparent',
+      backdropFilter:  scrolled ? 'blur(20px) saturate(1.5)' : 'none',
+      WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(1.5)' : 'none',
+      borderBottom:    scrolled ? '1px solid oklch(100% 0 0 / 0.6)' : '1px solid transparent',
+      boxShadow:       scrolled ? '0 1px 20px oklch(0% 0 0 / 0.05)' : 'none',
+      transition:      'all 0.35s ease',
+    }}>
+      <span style={{ fontWeight: 700, fontSize: '17px', letterSpacing: '-0.02em', color: 'var(--fg)' }}>
+        David Belli
+      </span>
+      <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
+        <div className="nav-section-links" style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
+          {['Credits', 'About', 'Services'].map((s) =>
+            <a key={s} href={`#${s.toLowerCase()}`} style={{
+              color: 'var(--fg-mid)', textDecoration: 'none', fontSize: '14px', fontWeight: 500, transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => e.target.style.color = 'var(--fg)'}
+            onMouseLeave={(e) => e.target.style.color = 'var(--fg-mid)'}>
+              {s}
+            </a>
+          )}
+        </div>
+        <a className="nav-cta" href={`mailto:${EMAIL}`} style={{
+          background: 'linear-gradient(135deg, var(--accent), var(--accent2))',
+          color: '#fff', textDecoration: 'none', fontSize: '13.5px', fontWeight: 600,
+          padding: '8px 22px', borderRadius: `${RADIUS}px`,
+          boxShadow: '0 2px 12px oklch(52% 0.18 260 / 0.3)',
+          transition: 'opacity 0.2s, transform 0.2s', display: 'inline-block', whiteSpace: 'nowrap',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.88'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1';    e.currentTarget.style.transform = 'translateY(0)'; }}>
+          Get in touch
+        </a>
+      </div>
+    </nav>
+  );
+}
+
+// ── Hero ──────────────────────────────────────────────────────────────────
+
+function Hero() {
+  return (
+    <section className="hero-section" style={{
+      minHeight: '100vh', display: 'flex', flexDirection: 'column',
+      justifyContent: 'center', alignItems: 'center',
+      padding: '120px 48px 100px', maxWidth: '1100px', margin: '0 auto', textAlign: 'center',
+    }}>
+      <FadeUp delay={0} style={{ marginBottom: '28px' }}>
+        <Chip>Italian Game Localization · EN → IT</Chip>
+      </FadeUp>
+      <FadeUp delay={100}>
+        <h1 style={{
+          fontSize: 'clamp(54px, 7.5vw, 104px)', fontWeight: 700,
+          lineHeight: 1.03, letterSpacing: '-0.03em', marginBottom: '32px', maxWidth: '880px',
+        }}>
+          Your game, <GradText>perfectly</GradText><br />spoken in Italian.
+        </h1>
+      </FadeUp>
+      <FadeUp delay={220}>
+        <p style={{
+          fontSize: '19px', color: 'var(--fg-mid)', maxWidth: '520px',
+          lineHeight: 1.75, marginBottom: '52px', fontWeight: 400,
+        }}>
+          Specialized localization for video games and interactive media.
+          From UI strings to full narrative scripts — crafted for Italian players,
+          not just translated for them.
+        </p>
+      </FadeUp>
+      <FadeUp delay={340}>
+        <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
+          <a href={`mailto:${EMAIL}`} style={{
+            background: 'linear-gradient(135deg, var(--accent), var(--accent2))',
+            color: '#fff', textDecoration: 'none', fontSize: '15.5px', fontWeight: 600,
+            padding: '16px 40px', borderRadius: `${RADIUS}px`,
+            boxShadow: '0 4px 24px oklch(52% 0.18 260 / 0.3)',
+            transition: 'opacity 0.2s, transform 0.15s', display: 'inline-block',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.88'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.opacity = '1';    e.currentTarget.style.transform = 'translateY(0)'; }}>
+            Get a free quote
+          </a>
+          <a href="#credits" style={{
+            background: 'oklch(100% 0 0 / 0.6)', backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)', border: '1px solid oklch(100% 0 0 / 0.85)',
+            boxShadow: '0 2px 12px oklch(0% 0 0 / 0.07)', color: 'var(--fg)',
+            textDecoration: 'none', fontSize: '15px', fontWeight: 500,
+            padding: '16px 32px', borderRadius: `${RADIUS}px`,
+            transition: 'background 0.2s, transform 0.15s',
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'oklch(100% 0 0 / 0.8)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'oklch(100% 0 0 / 0.6)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
+            See past work <span style={{ opacity: 0.5 }}>↓</span>
+          </a>
+        </div>
+      </FadeUp>
+      <FadeUp delay={460}>
+        <div style={{ display: 'flex', gap: '12px', marginTop: '72px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          {[
+            { n: '3+',    l: 'AAA titles' },
+            { n: 'EN→IT', l: 'Specialization' },
+            { n: '2022',  l: 'Freelancing since' },
+          ].map((s) =>
+            <div key={s.l} style={{
+              background: 'oklch(100% 0 0 / 0.5)', backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)', border: '1px solid oklch(100% 0 0 / 0.8)',
+              borderRadius: '14px', padding: '14px 24px',
+              boxShadow: '0 2px 12px oklch(0% 0 0 / 0.06)',
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+            }}>
+              <span style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--accent)' }}>{s.n}</span>
+              <span style={{ fontSize: '12px', color: 'var(--fg-dim)', fontWeight: 500, marginTop: '2px' }}>{s.l}</span>
+            </div>
+          )}
+        </div>
+      </FadeUp>
+    </section>
+  );
+}
+
+// ── Credits ───────────────────────────────────────────────────────────────
+
+function Credits() {
+  return (
+    <section id="credits" className="credits-section" style={{ padding: '100px 48px', maxWidth: '800px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '56px', textAlign: 'center' }}>
+        <Chip>Credits</Chip>
+        <h2 style={{ fontSize: 'clamp(36px, 4vw, 56px)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.025em', marginTop: '18px' }}>
+          Work that ships<br /><GradText>to Italian players.</GradText>
+        </h2>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {CREDITS.map((c) =>
+          <div key={c.title} className="glass-card" style={{
+            padding: '28px 36px', display: 'flex', alignItems: 'center',
+            justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap',
+            transition: 'transform 0.2s, box-shadow 0.2s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 40px oklch(0% 0 0 / 0.1), 0 1px 0 oklch(100% 0 0 / 0.9) inset'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)';    e.currentTarget.style.boxShadow = 'var(--card-shadow)'; }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '14px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '-0.02em' }}>{c.title}</span>
+                <span style={{ fontSize: '14px', color: 'var(--fg-dim)', fontWeight: 400 }}>{c.studio}</span>
+              </div>
+              <div style={{ marginTop: '6px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <span style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--accent)' }}>Italian Localization</span>
+                <span style={{ width: '3px', height: '3px', borderRadius: '50%', background: 'var(--fg-dim)', display: 'inline-block', opacity: 0.4 }} />
+                <span style={{ fontSize: '12.5px', color: 'var(--fg-dim)' }}>Via {c.via}</span>
+              </div>
+            </div>
+            <span style={{ fontSize: '13px', color: 'var(--fg-dim)', fontWeight: 600, background: 'oklch(0% 0 0 / 0.05)', padding: '6px 14px', borderRadius: '100px', flexShrink: 0 }}>{c.year}</span>
+          </div>
+        )}
+        <div className="glass-card" style={{ padding: '24px 36px', display: 'flex', alignItems: 'center', gap: '16px', opacity: 0.75 }}>
+          <span style={{ fontSize: '18px', fontWeight: 600, color: 'var(--fg-mid)', fontStyle: 'italic' }}>+ Indie &amp; board game projects</span>
+          <span style={{ fontSize: '13px', color: 'var(--fg-dim)' }}>Multiple titles · Freelance · 2022–present</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── About ─────────────────────────────────────────────────────────────────
+
+function About() {
+  return (
+    <section id="about" className="about-section" style={{ padding: '100px 48px', maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <Chip>About</Chip>
+      </div>
+      <div className="glass-card about-grid" style={{
+        padding: '64px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center',
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <h2 style={{ fontSize: 'clamp(30px, 3vw, 44px)', fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.025em', marginTop: '18px', marginBottom: '24px' }}>
+            Localization that feels<br /><GradText>made in Italy.</GradText>
+          </h2>
+          <p style={{ fontSize: '16px', color: 'var(--fg-mid)', lineHeight: 1.8, marginBottom: '18px', fontWeight: 400 }}>
+            I'm David Belli, an Italian localization specialist focused exclusively on video games
+            and interactive media. I started at <strong style={{ color: 'var(--fg)', fontWeight: 600 }}>Wabbit Translations</strong>,
+            working on major AAA releases including Helldivers 2, Cities: Skylines 2, and Total War: Pharaoh.
+          </p>
+          <p style={{ fontSize: '16px', color: 'var(--fg-mid)', lineHeight: 1.8, fontWeight: 400 }}>
+            Since 2022 I've worked independently with indie developers and board game publishers.
+            I understand games as a medium — the pacing of UI text, the craft of NPC dialogue,
+            the importance of consistent genre register.
+          </p>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {[
+            { label: 'Genre expertise', value: 'Strategy · Survival · Historical · City-builders · RPG · Board games' },
+            { label: 'Languages',       value: 'English → Italian (EN→IT)' },
+            { label: 'Based in',        value: 'Italy' },
+          ].map((row) =>
+            <div key={row.label} style={{ background: 'oklch(0% 0 0 / 0.03)', borderRadius: `${RADIUS_SM}px`, border: '1px solid oklch(0% 0 0 / 0.05)', padding: '20px 24px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '6px' }}>{row.label}</div>
+              <div style={{ fontSize: '15px', color: 'var(--fg)', fontWeight: 500, lineHeight: 1.5 }}>{row.value}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Services ──────────────────────────────────────────────────────────────
+
+function PkgCard({ pkg }) {
+  const [hov, setHov] = React.useState(false);
+  return (
+    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
+      background: pkg.featured
+        ? 'linear-gradient(160deg, oklch(100% 0 0 / 0.8) 0%, oklch(95% 0.04 260 / 0.7) 100%)'
+        : 'oklch(100% 0 0 / 0.55)',
+      backdropFilter: 'blur(24px) saturate(1.5)', WebkitBackdropFilter: 'blur(24px) saturate(1.5)',
+      border: pkg.featured ? '1.5px solid oklch(52% 0.18 260 / 0.25)' : '1px solid oklch(100% 0 0 / 0.8)',
+      borderRadius: `${RADIUS}px`, padding: '36px', display: 'flex', flexDirection: 'column',
+      boxShadow: pkg.featured
+        ? `0 8px 40px oklch(52% 0.18 260 / 0.15), 0 1px 0 oklch(100% 0 0 / 0.9) inset${hov ? ', 0 20px 60px oklch(52% 0.18 260 / 0.2)' : ''}`
+        : '0 2px 20px oklch(0% 0 0 / 0.06), 0 1px 0 oklch(100% 0 0 / 0.9) inset',
+      transform: hov ? 'translateY(-4px) scale(1.005)' : 'translateY(0) scale(1)',
+      transition: 'transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s',
+      position: 'relative', flex: 1,
+    }}>
+      {pkg.featured &&
+        <div style={{
+          position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)',
+          background: 'linear-gradient(135deg, var(--accent), var(--accent2))',
+          color: '#fff', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em',
+          textTransform: 'uppercase', padding: '5px 18px', borderRadius: '100px',
+          boxShadow: '0 4px 16px oklch(52% 0.18 260 / 0.3)', whiteSpace: 'nowrap',
+        }}>Most popular</div>
+      }
+      <Chip style={{ marginBottom: '20px', alignSelf: 'flex-start' }}>{pkg.tag}</Chip>
+      <h3 style={{ fontSize: '24px', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '8px' }}>{pkg.name}</h3>
+      <div style={{ marginBottom: '16px' }}>
+        <GradText style={{ fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>{pkg.price}</GradText>
+      </div>
+      <p style={{ fontSize: '14px', color: 'var(--fg-mid)', lineHeight: 1.65, marginBottom: '24px' }}>{pkg.pitch}</p>
+      <div style={{ borderTop: '1px solid oklch(0% 0 0 / 0.07)', paddingTop: '20px', marginBottom: '20px', flex: 1 }}>
+        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '9px' }}>
+          {pkg.items.map((item) =>
+            <li key={item} style={{ display: 'flex', gap: '10px', fontSize: '13.5px', color: 'var(--fg-mid)', lineHeight: 1.5 }}>
+              <span style={{
+                width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0, marginTop: '1px',
+                background: 'linear-gradient(135deg, var(--accent), var(--accent2))',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
+                  <path d="M1 3l2 2 4-4" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              {item}
+            </li>
+          )}
+        </ul>
+      </div>
+      <p style={{ fontSize: '12px', color: 'var(--fg-dim)', lineHeight: 1.6, marginBottom: '24px', fontStyle: 'italic' }}>{pkg.ideal}</p>
+      <a href={`mailto:${EMAIL}`} style={{
+        display: 'block', textAlign: 'center',
+        background: pkg.featured ? 'linear-gradient(135deg, var(--accent), var(--accent2))' : 'oklch(0% 0 0 / 0.06)',
+        color: pkg.featured ? '#fff' : 'var(--fg)', textDecoration: 'none',
+        fontSize: '14px', fontWeight: 600, padding: '13px', borderRadius: `${RADIUS_BTN}px`,
+        border: pkg.featured ? 'none' : '1px solid oklch(0% 0 0 / 0.08)',
+        boxShadow: pkg.featured ? '0 4px 20px oklch(52% 0.18 260 / 0.25)' : 'none',
+        transition: 'opacity 0.2s', letterSpacing: '0.01em',
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.opacity = '0.82'}
+      onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+        Get in touch →
+      </a>
+    </div>
+  );
+}
+
+function Services() {
+  return (
+    <section id="services" className="services-section" style={{ padding: '100px 48px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '56px', textAlign: 'center' }}>
+        <Chip>Services & Packages</Chip>
+        <h2 style={{ fontSize: 'clamp(36px, 4vw, 56px)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.025em', marginTop: '18px' }}>
+          One language.<br /><GradText>Three ways in.</GradText>
+        </h2>
+        <p style={{ marginTop: '18px', fontSize: '17px', color: 'var(--fg-mid)', lineHeight: 1.7 }}>
+          Pick the package that fits your scope — or write and we'll figure it out together.
+        </p>
+      </div>
+      <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', alignItems: 'start' }}>
+        {PACKAGES.map((pkg) => <PkgCard key={pkg.name} pkg={pkg} />)}
+      </div>
+      <p style={{ marginTop: '28px', textAlign: 'center', fontSize: '13px', color: 'var(--fg-dim)' }}>
+        Prices are estimates — final quotes depend on word count, complexity and deadline.{' '}
+        <a href={`mailto:${EMAIL}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>Let's talk →</a>
+      </p>
+    </section>
+  );
+}
+
+// ── CTA ───────────────────────────────────────────────────────────────────
+
+function CTA() {
+  return (
+    <section className="cta-section" style={{ padding: '80px 48px 120px', maxWidth: '1100px', margin: '0 auto' }}>
+      <div className="glass-card cta-inner" style={{
+        padding: '80px 64px', textAlign: 'center', position: 'relative', overflow: 'hidden',
+        background: 'linear-gradient(135deg, oklch(100% 0 0 / 0.7) 0%, oklch(94% 0.04 260 / 0.6) 100%)',
+      }}>
+        <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, oklch(80% 0.12 260 / 0.15), transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-60px', left: '-60px', width: '240px', height: '240px', borderRadius: '50%', background: 'radial-gradient(circle, oklch(80% 0.12 320 / 0.12), transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'relative' }}>
+          <Chip style={{ marginBottom: '28px' }}>Let's work together</Chip>
+          <h2 style={{ fontSize: 'clamp(38px, 5vw, 66px)', fontWeight: 700, lineHeight: 1.08, letterSpacing: '-0.03em', marginBottom: '20px' }}>
+            Ready to reach<br /><GradText>Italian players?</GradText>
+          </h2>
+          <p style={{ fontSize: '18px', color: 'var(--fg-mid)', lineHeight: 1.7, maxWidth: '460px', margin: '0 auto 44px' }}>
+            Send me your project details and I'll reply with a tailored quote within 48 hours.
+          </p>
+          <a className="cta-email-btn" href={`mailto:${EMAIL}`} style={{
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, var(--accent), var(--accent2))',
+            color: '#fff', textDecoration: 'none', fontSize: '16px', fontWeight: 700,
+            padding: '18px 52px', borderRadius: `${RADIUS}px`,
+            boxShadow: '0 8px 40px oklch(52% 0.18 260 / 0.3)',
+            letterSpacing: '0.01em', transition: 'opacity 0.2s, transform 0.15s', textAlign: 'center',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.88'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.opacity = '1';    e.currentTarget.style.transform = 'translateY(0)'; }}>
+            {EMAIL}
+          </a>
+          <div style={{ marginTop: '16px', fontSize: '13px', color: 'var(--fg-dim)' }}>No commitment needed — just say hello.</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────
+
+function Footer() {
+  return (
+    <footer style={{
+      borderTop: '1px solid oklch(0% 0 0 / 0.08)', padding: '28px 48px',
+      display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px',
+    }}>
+      <span style={{ fontWeight: 700, fontSize: '15px', letterSpacing: '-0.01em' }}>David Belli</span>
+      <span style={{ fontSize: '13px', color: 'var(--fg-dim)' }}>Italian Game Localization · EN→IT · Freelance since 2022</span>
+      <a href={`mailto:${EMAIL}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '13px', fontWeight: 500 }}>{EMAIL}</a>
+    </footer>
+  );
+}
+
+// ── App ───────────────────────────────────────────────────────────────────
+
+function App() {
+  return (
+    <>
+      <Nav />
+      <main>
+        <Hero />
+        <Credits />
+        <About />
+        <Services />
+        <CTA />
+        <Footer />
+      </main>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

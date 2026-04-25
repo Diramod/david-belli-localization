@@ -1,0 +1,83 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --ff: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --fg:     oklch(18% 0.01 250);
+  --fg-mid: oklch(42% 0.01 250);
+  --fg-dim: oklch(62% 0.01 250);
+  --accent:  oklch(52% 0.18 360);
+  --accent2: oklch(62% 0.18 60);
+  --card-shadow: 0 2px 24px oklch(0% 0 0 / 0.07), 0 1px 0 oklch(100% 0 0 / 0.9) inset;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--ff);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--fg);
+  background: #f5f3f0;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* mesh gradient backdrop */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% -10%, oklch(88% 0.07 260 / 0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 10%,  oklch(88% 0.07 320 / 0.4) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 50% 100%, oklch(90% 0.05 200 / 0.35) 0%, transparent 60%),
+    oklch(96% 0.005 80);
+}
+
+/* noise grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 128px;
+  pointer-events: none;
+}
+
+.glass-card {
+  background: oklch(100% 0 0 / 0.6);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid oklch(100% 0 0 / 0.8);
+  box-shadow: var(--card-shadow);
+  border-radius: 20px;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .nav-section-links          { display: none !important; }
+  .nav-cta                    { padding: 7px 16px !important; font-size: 13px !important; }
+  nav                         { padding: 0 20px !important; }
+  .hero-section               { padding: 120px 24px 80px !important; }
+  .credits-section,
+  .about-section,
+  .services-section,
+  .cta-section                { padding: 60px 24px !important; }
+  .about-grid                 { grid-template-columns: 1fr !important; gap: 32px !important; padding: 36px 28px !important; }
+  .services-grid              { grid-template-columns: 1fr !important; }
+  .cta-inner                  { padding: 48px 28px !important; }
+  .cta-email-btn              { font-size: 13px !important; padding: 16px 20px !important; word-break: break-all !important; width: 100% !important; }
+  footer                      { flex-direction: column !important; align-items: flex-start !important; }
+}
