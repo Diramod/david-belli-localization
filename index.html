@@ -91,8 +91,8 @@ function Chip({ children, style }) {
       textTransform:  'uppercase',
       padding:        '5px 14px',
       borderRadius:   '100px',
-      background:     'oklch(100% 0 0 / 0.65)',
-      border:         '1px solid oklch(100% 0 0 / 0.9)',
+      background:     'var(--chip-bg)',
+      border:         '1px solid var(--chip-border)',
       boxShadow:      '0 1px 4px oklch(0% 0 0 / 0.08)',
       color:          'var(--accent)',
       backdropFilter: 'blur(8px)',
@@ -115,7 +115,7 @@ function GradText({ children, style }) {
 
 // ── Nav ───────────────────────────────────────────────────────────────────
 
-function Nav() {
+function Nav({ toggleTheme, dark }) {
   const [scrolled, setScrolled] = React.useState(false);
   React.useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
@@ -133,10 +133,10 @@ function Nav() {
       justifyContent:  'space-between',
       padding:         '0 40px',
       height:          '58px',
-      background:      scrolled ? 'oklch(98% 0.003 80 / 0.75)' : 'transparent',
+      background:      scrolled ? 'var(--nav-scrolled-bg)' : 'transparent',
       backdropFilter:  scrolled ? 'blur(20px) saturate(1.5)' : 'none',
       WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(1.5)' : 'none',
-      borderBottom:    scrolled ? '1px solid oklch(100% 0 0 / 0.6)' : '1px solid transparent',
+      borderBottom:    scrolled ? '1px solid var(--nav-border)' : '1px solid transparent',
       boxShadow:       scrolled ? '0 1px 20px oklch(0% 0 0 / 0.05)' : 'none',
       transition:      'all 0.35s ease',
     }}>
@@ -155,6 +155,21 @@ function Nav() {
             </a>
           )}
         </div>
+        <button onClick={toggleTheme} title={dark ? 'Switch to light mode' : 'Switch to dark mode'} style={{
+          background: 'var(--chip-bg)', border: '1px solid var(--chip-border)',
+          borderRadius: '50%', width: '34px', height: '34px', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'var(--fg-mid)', flexShrink: 0,
+          backdropFilter: 'blur(8px)', transition: 'background 0.2s, color 0.2s',
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--fg)'}
+        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--fg-mid)'}>
+          {dark
+            ? <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="3" stroke="currentColor" strokeWidth="1.4"/><line x1="7.5" y1="0.5" x2="7.5" y2="2.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><line x1="7.5" y1="12.5" x2="7.5" y2="14.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><line x1="0.5" y1="7.5" x2="2.5" y2="7.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><line x1="12.5" y1="7.5" x2="14.5" y2="7.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><line x1="2.93" y1="2.93" x2="4.34" y2="4.34" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><line x1="10.66" y1="10.66" x2="12.07" y2="12.07" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><line x1="12.07" y1="2.93" x2="10.66" y2="4.34" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><line x1="4.34" y1="10.66" x2="2.93" y2="12.07" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>
+            : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ display: 'block' }}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          }
+        </button>
+
         <a className="nav-cta" href={`mailto:${EMAIL}`} style={{
           background: 'linear-gradient(135deg, var(--accent), var(--accent2))',
           color: '#fff', textDecoration: 'none', fontSize: '13.5px', fontWeight: 600,
@@ -215,16 +230,16 @@ function Hero() {
             Get a free quote
           </a>
           <a href="#credits" style={{
-            background: 'oklch(100% 0 0 / 0.6)', backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)', border: '1px solid oklch(100% 0 0 / 0.85)',
+            background: 'var(--glass-btn-bg)', backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)', border: '1px solid var(--chip-border)',
             boxShadow: '0 2px 12px oklch(0% 0 0 / 0.07)', color: 'var(--fg)',
             textDecoration: 'none', fontSize: '15px', fontWeight: 500,
             padding: '16px 32px', borderRadius: `${RADIUS}px`,
             transition: 'background 0.2s, transform 0.15s',
             display: 'inline-flex', alignItems: 'center', gap: '8px',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'oklch(100% 0 0 / 0.8)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'oklch(100% 0 0 / 0.6)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--glass-btn-hover)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--glass-btn-bg)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
             See past work <span style={{ opacity: 0.5 }}>↓</span>
           </a>
         </div>
@@ -237,8 +252,8 @@ function Hero() {
             { n: '2022',  l: 'Freelancing since' },
           ].map((s) =>
             <div key={s.l} style={{
-              background: 'oklch(100% 0 0 / 0.5)', backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)', border: '1px solid oklch(100% 0 0 / 0.8)',
+              background: 'var(--surface-bg)', backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)', border: '1px solid var(--surface-border)',
               borderRadius: '14px', padding: '14px 24px',
               boxShadow: '0 2px 12px oklch(0% 0 0 / 0.06)',
               display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -284,7 +299,7 @@ function Credits() {
                 <span style={{ fontSize: '12.5px', color: 'var(--fg-dim)' }}>Via {c.via}</span>
               </div>
             </div>
-            <span style={{ fontSize: '13px', color: 'var(--fg-dim)', fontWeight: 600, background: 'oklch(0% 0 0 / 0.05)', padding: '6px 14px', borderRadius: '100px', flexShrink: 0 }}>{c.year}</span>
+            <span style={{ fontSize: '13px', color: 'var(--fg-dim)', fontWeight: 600, background: 'var(--badge-bg)', padding: '6px 14px', borderRadius: '100px', flexShrink: 0 }}>{c.year}</span>
           </div>
         )}
         <div className="glass-card" style={{ padding: '24px 36px', display: 'flex', alignItems: 'center', gap: '16px', opacity: 0.75 }}>
@@ -375,7 +390,7 @@ function About() {
             { label: 'Languages',       value: 'English → Italian (EN→IT)' },
             { label: 'Based in',        value: 'Italy' },
           ].map((row) =>
-            <div key={row.label} style={{ background: 'oklch(0% 0 0 / 0.03)', borderRadius: `${RADIUS_SM}px`, border: '1px solid oklch(0% 0 0 / 0.05)', padding: '20px 24px' }}>
+            <div key={row.label} style={{ background: 'var(--info-row-bg)', borderRadius: `${RADIUS_SM}px`, border: '1px solid var(--info-row-border)', padding: '20px 24px' }}>
               <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '6px' }}>{row.label}</div>
               <div style={{ fontSize: '15px', color: 'var(--fg)', fontWeight: 500, lineHeight: 1.5 }}>{row.value}</div>
             </div>
@@ -392,11 +407,9 @@ function PkgCard({ pkg }) {
   const [hov, setHov] = React.useState(false);
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
-      background: pkg.featured
-        ? 'linear-gradient(160deg, oklch(100% 0 0 / 0.8) 0%, oklch(95% 0.04 260 / 0.7) 100%)'
-        : 'oklch(100% 0 0 / 0.55)',
+      background: pkg.featured ? 'var(--pkg-featured-bg)' : 'var(--pkg-plain-bg)',
       backdropFilter: 'blur(24px) saturate(1.5)', WebkitBackdropFilter: 'blur(24px) saturate(1.5)',
-      border: pkg.featured ? '1.5px solid oklch(52% 0.18 260 / 0.25)' : '1px solid oklch(100% 0 0 / 0.8)',
+      border: pkg.featured ? '1.5px solid oklch(52% 0.18 260 / 0.25)' : '1px solid var(--pkg-plain-border)',
       borderRadius: `${RADIUS}px`, padding: '36px', display: 'flex', flexDirection: 'column',
       boxShadow: pkg.featured
         ? `0 8px 40px oklch(52% 0.18 260 / 0.15), 0 1px 0 oklch(100% 0 0 / 0.9) inset${hov ? ', 0 20px 60px oklch(52% 0.18 260 / 0.2)' : ''}`
@@ -420,7 +433,7 @@ function PkgCard({ pkg }) {
         <GradText style={{ fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>{pkg.price}</GradText>
       </div>
       <p style={{ fontSize: '14px', color: 'var(--fg-mid)', lineHeight: 1.65, marginBottom: '24px' }}>{pkg.pitch}</p>
-      <div style={{ borderTop: '1px solid oklch(0% 0 0 / 0.07)', paddingTop: '20px', marginBottom: '20px', flex: 1 }}>
+      <div style={{ borderTop: '1px solid var(--pkg-divider)', paddingTop: '20px', marginBottom: '20px', flex: 1 }}>
         <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '9px' }}>
           {pkg.items.map((item) =>
             <li key={item} style={{ display: 'flex', gap: '10px', fontSize: '13.5px', color: 'var(--fg-mid)', lineHeight: 1.5 }}>
@@ -441,10 +454,10 @@ function PkgCard({ pkg }) {
       <p style={{ fontSize: '12px', color: 'var(--fg-dim)', lineHeight: 1.6, marginBottom: '24px', fontStyle: 'italic' }}>{pkg.ideal}</p>
       <a href={`mailto:${EMAIL}`} style={{
         display: 'block', textAlign: 'center',
-        background: pkg.featured ? 'linear-gradient(135deg, var(--accent), var(--accent2))' : 'oklch(0% 0 0 / 0.06)',
+        background: pkg.featured ? 'linear-gradient(135deg, var(--accent), var(--accent2))' : 'var(--pkg-btn-plain-bg)',
         color: pkg.featured ? '#fff' : 'var(--fg)', textDecoration: 'none',
         fontSize: '14px', fontWeight: 600, padding: '13px', borderRadius: `${RADIUS_BTN}px`,
-        border: pkg.featured ? 'none' : '1px solid oklch(0% 0 0 / 0.08)',
+        border: pkg.featured ? 'none' : '1px solid var(--pkg-btn-plain-border)',
         boxShadow: pkg.featured ? '0 4px 20px oklch(52% 0.18 260 / 0.25)' : 'none',
         transition: 'opacity 0.2s', letterSpacing: '0.01em',
       }}
@@ -486,7 +499,7 @@ function CTA() {
     <section className="cta-section" style={{ padding: '80px 48px 120px', maxWidth: '1100px', margin: '0 auto' }}>
       <div className="glass-card cta-inner" style={{
         padding: '80px 64px', textAlign: 'center', position: 'relative', overflow: 'hidden',
-        background: 'linear-gradient(135deg, oklch(100% 0 0 / 0.7) 0%, oklch(94% 0.04 260 / 0.6) 100%)',
+        background: 'var(--cta-card-bg)',
       }}>
         <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, oklch(80% 0.12 260 / 0.15), transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: '-60px', left: '-60px', width: '240px', height: '240px', borderRadius: '50%', background: 'radial-gradient(circle, oklch(80% 0.12 320 / 0.12), transparent 70%)', pointerEvents: 'none' }} />
@@ -522,7 +535,7 @@ function CTA() {
 function Footer() {
   return (
     <footer style={{
-      borderTop: '1px solid oklch(0% 0 0 / 0.08)', padding: '28px 48px',
+      borderTop: '1px solid var(--divider)', padding: '28px 48px',
       display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px',
     }}>
       <span style={{ fontWeight: 700, fontSize: '15px', letterSpacing: '-0.01em' }}>David Belli</span>
@@ -535,9 +548,20 @@ function Footer() {
 // ── App ───────────────────────────────────────────────────────────────────
 
 function App() {
+  const [dark, setDark] = React.useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  }, [dark]);
+
   return (
     <>
-      <Nav />
+      <Nav toggleTheme={() => setDark(d => !d)} dark={dark} />
       <main>
         <Hero />
         <Credits />

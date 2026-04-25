@@ -12,7 +12,74 @@
   --accent:  oklch(52% 0.18 360);
   --accent2: oklch(62% 0.18 60);
   --card-shadow: 0 2px 24px oklch(0% 0 0 / 0.07), 0 1px 0 oklch(100% 0 0 / 0.9) inset;
+
+  /* surface tokens — overridden in dark mode */
+  --body-bg:            #f5f3f0;
+  --nav-scrolled-bg:    oklch(98% 0.003 80 / 0.75);
+  --nav-border:         oklch(100% 0 0 / 0.6);
+  --chip-bg:            oklch(100% 0 0 / 0.65);
+  --chip-border:        oklch(100% 0 0 / 0.9);
+  --surface-bg:         oklch(100% 0 0 / 0.5);
+  --surface-border:     oklch(100% 0 0 / 0.8);
+  --glass-btn-bg:       oklch(100% 0 0 / 0.6);
+  --glass-btn-hover:    oklch(100% 0 0 / 0.8);
+  --badge-bg:           oklch(0% 0 0 / 0.05);
+  --info-row-bg:        oklch(0% 0 0 / 0.03);
+  --info-row-border:    oklch(0% 0 0 / 0.05);
+  --pkg-plain-bg:       oklch(100% 0 0 / 0.55);
+  --pkg-plain-border:   oklch(100% 0 0 / 0.8);
+  --pkg-featured-bg:    linear-gradient(160deg, oklch(100% 0 0 / 0.8) 0%, oklch(95% 0.04 260 / 0.7) 100%);
+  --cta-card-bg:        linear-gradient(135deg, oklch(100% 0 0 / 0.7) 0%, oklch(94% 0.04 260 / 0.6) 100%);
+  --divider:            oklch(0% 0 0 / 0.08);
+  --pkg-divider:        oklch(0% 0 0 / 0.07);
+  --pkg-btn-plain-bg:   oklch(0% 0 0 / 0.06);
+  --pkg-btn-plain-border: oklch(0% 0 0 / 0.08);
 }
+
+/* ── Dark mode ────────────────────────────────────────────────────────── */
+
+[data-theme="dark"] {
+  --fg:     oklch(92% 0.008 250);
+  --fg-mid: oklch(65% 0.008 250);
+  --fg-dim: oklch(48% 0.008 250);
+  --card-shadow: 0 2px 24px oklch(0% 0 0 / 0.35), 0 1px 0 oklch(100% 0 0 / 0.06) inset;
+
+  --body-bg:            oklch(11% 0.01 250);
+  --nav-scrolled-bg:    oklch(13% 0.01 250 / 0.92);
+  --nav-border:         oklch(100% 0 0 / 0.1);
+  --chip-bg:            oklch(100% 0 0 / 0.07);
+  --chip-border:        oklch(100% 0 0 / 0.13);
+  --surface-bg:         oklch(100% 0 0 / 0.06);
+  --surface-border:     oklch(100% 0 0 / 0.12);
+  --glass-btn-bg:       oklch(100% 0 0 / 0.07);
+  --glass-btn-hover:    oklch(100% 0 0 / 0.13);
+  --badge-bg:           oklch(100% 0 0 / 0.08);
+  --info-row-bg:        oklch(100% 0 0 / 0.04);
+  --info-row-border:    oklch(100% 0 0 / 0.09);
+  --pkg-plain-bg:       oklch(100% 0 0 / 0.06);
+  --pkg-plain-border:   oklch(100% 0 0 / 0.12);
+  --pkg-featured-bg:    linear-gradient(160deg, oklch(100% 0 0 / 0.09) 0%, oklch(42% 0.1 260 / 0.25) 100%);
+  --cta-card-bg:        linear-gradient(135deg, oklch(100% 0 0 / 0.06) 0%, oklch(32% 0.08 260 / 0.25) 100%);
+  --divider:            oklch(100% 0 0 / 0.08);
+  --pkg-divider:        oklch(100% 0 0 / 0.08);
+  --pkg-btn-plain-bg:   oklch(100% 0 0 / 0.07);
+  --pkg-btn-plain-border: oklch(100% 0 0 / 0.12);
+}
+
+[data-theme="dark"] body::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 10% -10%, oklch(30% 0.1 260 / 0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 10%,  oklch(30% 0.1 320 / 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 50% 100%, oklch(22% 0.06 200 / 0.4) 0%, transparent 60%),
+    oklch(11% 0.01 250);
+}
+
+[data-theme="dark"] .glass-card {
+  background:   oklch(100% 0 0 / 0.05);
+  border-color: oklch(100% 0 0 / 0.1);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
 
 html {
   scroll-behavior: smooth;
@@ -23,7 +90,7 @@ body {
   font-size: 16px;
   line-height: 1.6;
   color: var(--fg);
-  background: #f5f3f0;
+  background: var(--body-bg);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -65,6 +132,8 @@ body::after {
 #root {
   min-height: 100vh;
 }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
   .nav-section-links          { display: none !important; }
